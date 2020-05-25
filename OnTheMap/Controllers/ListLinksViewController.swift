@@ -16,7 +16,9 @@ class ListLinksViewController: UIViewController, UITableViewDelegate, UITableVie
     override func viewDidLoad() {
         let refreshButton = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(refreshLocations))
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(add))
+        let logoutButton = UIBarButtonItem(title: "LOGOUT", style: .done, target: self, action: #selector(logout))
         tabBarController?.navigationItem.hidesBackButton = true
+        tabBarController?.navigationItem.setLeftBarButton(logoutButton, animated: true)
         tabBarController?.navigationItem.setRightBarButtonItems([addButton, refreshButton], animated: true)
         navigationController?.navigationBar.isHidden = false
         tableView.delegate = self

@@ -19,7 +19,9 @@ extension UIViewController {
     }
     
     @objc func pop() {
-        dismiss(animated: true, completion: nil)
+        DispatchQueue.main.async {
+            self.dismiss(animated: true, completion: nil)
+        }
     }
     
     @objc func add() {
@@ -28,6 +30,23 @@ extension UIViewController {
             present(controller, animated: true, completion: nil)
         }
     }
+    
+    @objc func logout() {
+        HttpHelper.deleteUserSession() { (success, errorMessage, data) in
+            // Since this is logging out, app will not notify user if something went wrong
+            // but print a debug message to help during development
+            if !success {
+                if let errorMessage = errorMessage {
+                    print(errorMessage)
+                }
+            }
+            DispatchQueue.main.async {
+                if let navigator = self.navigationController {
+                    navigator.popToRootViewController(animated: true)
+                }
+            }
+        }
+    } 
     
     func getStudents(forceDownload: Bool, studentHandler: @escaping ([StudentInformation]) -> Void) {
         // Check if there are cached locations

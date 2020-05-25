@@ -11,7 +11,7 @@ import UIKit
 class LoginViewController: UIViewController, UITextFieldDelegate {
     
     let signUpAddress = "https://auth.udacity.com/sign-up"
-    let linksSegue = "LinksSegue"
+    let tabControllerId = "TabController"
     
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
@@ -88,6 +88,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             if success {
                 let decoder = JSONDecoder()
                 if let sessionData = try? decoder.decode(SessionEndpointResponse.self, from: response!) {
+                    // Save session id
+                    if let appDelegate = UIApplication.shared.delegate as! AppDelegate? {
+                        appDelegate.sessionId = sessionData.session.id
+                    }
+
                     // Clear user input when session is received
                     self.emailTextField.text = ""
                     self.passwordTextField.text = ""
@@ -104,7 +109,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     func showFirst100(sessionId: String) {
-        performSegue(withIdentifier: linksSegue, sender: self)
+        if let mapController = storyboard?.instantiateViewController(withIdentifier: tabControllerId) {
+            navigationController?.pushViewController(mapController, animated: true)
+        }
     }
         
     @objc func willShowKeyboard() {

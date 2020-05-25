@@ -11,11 +11,13 @@ import Foundation
 enum HttpHeader: String {
     case accept = "Accept"
     case contentType = "Content-Type"
+    case xsrfToken = "X-XSRF-TOKEN"
 }
 
 enum HttpMethod: String {
     case get = "GET"
     case post = "POST"
+    case delete = "DELETE"
 }
 
 enum MimeType: String {
@@ -36,13 +38,27 @@ class HttpHelper {
         var request = URLRequest(url: URL(string: Endpoint.studentLocation.rawValue)!)
         request.httpMethod = HttpMethod.post.rawValue
         request.addValue(MimeType.json.rawValue, forHTTPHeaderField:  HttpHeader.contentType.rawValue)
-        request.httpBody = "{\"uniqueKey\": \"1234\", \"firstName\": \"John\", \"lastName\": \"Doe\",\"mapString\": \"Mountain View, CA\", \"mediaURL\": \"https://udacity.com\",\"latitude\": 37.386052, \"longitude\": -122.083851}".data(using: .utf8)
+        request.httpBody = json.data(using: .utf8)
         doRequest(request, handler: handler) 
     }
     
     class func getFirst100Locations(handler: @escaping TaskResponse) {
         var request = URLRequest(url: URL(string: Endpoint.first100.rawValue)!)
         request.httpMethod = HttpMethod.get.rawValue
+        doRequest(request, handler: handler)
+    }
+    
+    class func deleteUserSession(handler: @escaping TaskResponse) {
+        var request = URLRequest(url: URL(string: Endpoint.session.rawValue)!)
+        request.httpMethod = HttpMethod.delete.rawValue
+        var xsrfCookie: HTTPCookie? = nil
+        let sharedCookieStorage = HTTPCookieStorage.shared
+        for cookie in sharedCookieStorage.cookies! {
+          if cookie.name == "XSRF-TOKEN" { xsrfCookie = cookie }
+        }
+        if let xsrfCookie = xsrfCookie {
+            request.setValue(xsrfCookie.value, forHTTPHeaderField: HttpHeader.xsrfToken.rawValue)
+        }
         doRequest(request, handler: handler)
     }
     

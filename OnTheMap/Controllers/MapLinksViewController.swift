@@ -18,9 +18,11 @@ class MapLinksViewController: UIViewController, MKMapViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-       let refreshButton = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(refreshLocations))
+        let refreshButton = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(refreshLocations))
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(add))
+        let logoutButton = UIBarButtonItem(title: "LOGOUT", style: .done, target: self, action: #selector(logout)) 
         tabBarController?.navigationItem.hidesBackButton = true
+        tabBarController?.navigationItem.setLeftBarButton(logoutButton, animated: true)
         tabBarController?.navigationItem.setRightBarButtonItems([addButton, refreshButton], animated: true)
         navigationController?.navigationBar.isHidden = false
         mapView.delegate = self
@@ -75,7 +77,7 @@ class MapLinksViewController: UIViewController, MKMapViewDelegate {
                 let pin = MKPointAnnotation() 
                 pin.title = student.getFullname()
                 pin.subtitle = student.mediaURL
-                pin.coordinate = CLLocationCoordinate2D(latitude: student.latitude, longitude: student.latitude)
+                pin.coordinate = CLLocationCoordinate2D(latitude: student.latitude, longitude: student.longitude)
                 self.mapView.addAnnotation(pin)
             }
             self.mapView.isHidden = false
